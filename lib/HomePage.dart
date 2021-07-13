@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -11,7 +12,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  String displayName;
+  String email;
   User user;
   bool isloggedin = false;
 
@@ -28,9 +32,16 @@ class _HomePageState extends State<HomePage> {
     await firebaseUser?.reload();
     firebaseUser = _auth.currentUser;
 
-    if (firebaseUser != null) {
+    DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser.uid).get();
+    if (documentSnapshot.exists) {
+      email = documentSnapshot.get('email');
+      displayName =  documentSnapshot.get('displayName');
+    } else {
+      print('User does not exist in the database');
+    }
+
+    if (firebaseUser != null ) {
       setState(() {
-        this.user = firebaseUser;
         this.isloggedin = true;
       });
     }
@@ -64,8 +75,9 @@ class _HomePageState extends State<HomePage> {
           : Column(
               children: <Widget>[
                 Container(
+                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: Text(
-                    "Hello ${user.displayName} you are Logged in as ${user.email}",
+                    "Hello ${displayName} you are logged in using mail id ${email}",
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),

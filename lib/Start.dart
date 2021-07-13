@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Start extends StatefulWidget {
   @override
@@ -10,6 +11,7 @@ class Start extends StatefulWidget {
 
 class _StartState extends State<Start> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   Future<UserCredential> googleSignIn() async {
     GoogleSignIn googleSignIn = GoogleSignIn();
@@ -22,6 +24,13 @@ class _StartState extends State<Start> {
             accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
         final UserCredential user = await _auth.signInWithCredential(credential);
+        final User userdetails = _auth.currentUser ;
+        await firestore.collection("users").doc(_auth.currentUser.uid).set({
+          'displayName': userdetails.displayName,
+          'email':userdetails.email,
+        })
+            .then((value) => print("User Added"))
+            .catchError((error) => print("Failed to add user: $error"));
 
         await Navigator.pushReplacementNamed(context, "/");
 

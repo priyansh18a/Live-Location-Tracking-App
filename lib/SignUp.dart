@@ -36,7 +36,7 @@ class _SignUpState extends State<SignUp> {
         UserCredential user = await _auth.createUserWithEmailAndPassword(
             email: _email, password: _password);
         if (user != null)
-          await _auth.currentUser.updateDisplayName(_name);
+          // await _auth.currentUser.updateDisplayName(_name);
           return firestore.collection("users").doc(_auth.currentUser.uid).set({
             'displayName': _name,
             'email':_email,
