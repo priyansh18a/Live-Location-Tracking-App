@@ -1,8 +1,8 @@
-import 'package:authentification/Start.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-// import 'package:authentification/Start.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,6 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   User user;
   bool isloggedin = false;
 
@@ -51,20 +52,17 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+        title: 'Welcome to Treklocation',
+        home: Scaffold(
+        appBar: AppBar(
+        title: const Text('Welcome to Treklocation'),
+        ),
         body: Container(
-      child: !isloggedin
+        child: !isloggedin
           ? CircularProgressIndicator()
           : Column(
               children: <Widget>[
-                SizedBox(height: 40.0),
-                Container(
-                  height: 300,
-                  child: Image(
-                    image: AssetImage("images/welcome.jpg"),
-                    fit: BoxFit.contain,
-                  ),
-                ),
                 Container(
                   child: Text(
                     "Hello ${user.displayName} you are Logged in as ${user.email}",
@@ -72,21 +70,25 @@ class _HomePageState extends State<HomePage> {
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                 ),
-                RaisedButton(
-                  padding: EdgeInsets.fromLTRB(70, 10, 70, 10),
+                ElevatedButton(
+                  style:ElevatedButton.styleFrom(
+                    primary: Colors.orange,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    padding: EdgeInsets.fromLTRB(70, 10, 70, 10),
+                  ),
                   onPressed: signOut,
                   child: Text('Sign Out',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20.0,
                           fontWeight: FontWeight.bold)),
-                  color: Colors.orange,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
+
                 )
               ],
             ),
-    ));
+    ))
+    );
   }
 }
