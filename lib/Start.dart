@@ -23,8 +23,7 @@ class _StartState extends State<Start> {
         final AuthCredential credential = GoogleAuthProvider.credential(
             accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
-        final UserCredential user =
-            await _auth.signInWithCredential(credential);
+        final UserCredential user = await _auth.signInWithCredential(credential);
 
         await Navigator.pushReplacementNamed(context, "/");
 
@@ -68,7 +67,7 @@ class _StartState extends State<Start> {
                         color: Colors.black),
                     children: <TextSpan>[
                   TextSpan(
-                      text: 'X Groceries',
+                      text: 'Treklocation',
                       style: TextStyle(
                           fontSize: 30.0,
                           fontWeight: FontWeight.bold,
@@ -76,7 +75,7 @@ class _StartState extends State<Start> {
                 ])),
             SizedBox(height: 10.0),
             Text(
-              'Fresh Groceries Delivered at your Doorstep',
+              'Get location of your travel partner',
               style: TextStyle(color: Colors.black),
             ),
             SizedBox(height: 30.0),

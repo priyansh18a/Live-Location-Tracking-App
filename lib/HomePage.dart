@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                 RaisedButton(
                   padding: EdgeInsets.fromLTRB(70, 10, 70, 10),
                   onPressed: signOut,
-                  child: Text('Signout',
+                  child: Text('Sign Out',
                       style: TextStyle(
                           color: Colors.white,
                           fontSize: 20.0,
