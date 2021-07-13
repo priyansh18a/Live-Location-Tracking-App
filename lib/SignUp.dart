@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -8,6 +9,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _name, _email, _password;
@@ -33,14 +35,14 @@ class _SignUpState extends State<SignUp> {
       try {
         UserCredential user = await _auth.createUserWithEmailAndPassword(
             email: _email, password: _password);
-        if (user != null) {
-          // UserUpdateInfo updateuser = UserUpdateInfo();
-          // updateuser.displayName = _name;
-          //  user.updateProfile(updateuser);
-          await _auth.currentUser.updateProfile(displayName: _name);
-          // await Navigator.pushReplacementNamed(context,"/") ;
-
-        }
+        if (user != null)
+          // await _auth.currentUser.updateDisplayName(_name);
+          return firestore.collection("users").doc(_auth.currentUser.uid).set({
+            'displayName': _name,
+            'email':_email,
+            })
+              .then((value) => print("User Added"))
+              .catchError((error) => print("Failed to add user: $error"));
       } catch (e) {
         showError(e.message);
         print(e);
