@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:authentification/Location.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
 
@@ -16,13 +17,12 @@ class _HomePageState extends State<HomePage> {
 
   String displayName;
   String email;
-  User user;
   bool isloggedin = false;
 
   checkAuthentification() async {
     _auth.authStateChanges().listen((user) {
       if (user == null) {
-        Navigator.of(context).pushReplacementNamed("start");
+        Navigator.of(context).pushReplacementNamed("Start");
       }
     });
   }
@@ -66,9 +66,9 @@ class _HomePageState extends State<HomePage> {
     return MaterialApp(
         title: 'Welcome to Treklocation',
         home: Scaffold(
-        appBar: AppBar(
-        title: const Text('Welcome to Treklocation'),
-        ),
+              appBar: AppBar(
+                title: Text('Welcome to Treklocation'),
+              ),
         body: Container(
         child: !isloggedin
           ? CircularProgressIndicator()
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: Text(
-                    "Hello ${displayName} you are logged in using mail id ${email}",
+                    "Hello $displayName you are logged in using mail id $email",
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
@@ -100,7 +100,56 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ),
-    ))
+    ) ,
+          drawer: Drawer(
+        child: ListView(
+        padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Treklocation',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  textBaseline: TextBaseline.ideographic,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.location_on),
+              title: Text('Location'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.of(context).pushReplacementNamed("Location");
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text('Profile'),
+              onTap: () {
+                // change app state...
+                Navigator.pop(context); // close the drawer
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+    ),
+        )
     );
   }
 }
