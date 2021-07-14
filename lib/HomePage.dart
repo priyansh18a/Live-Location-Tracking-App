@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 ElevatedButton(
                   style:ElevatedButton.styleFrom(
-                    primary: Colors.orange,
+                    primary: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.orange,
+                color: Colors.blue,
               ),
               child: Text(
                 'Treklocation',
@@ -126,9 +126,9 @@ class _HomePageState extends State<HomePage> {
             ),
             ListTile(
               leading: Icon(Icons.location_on),
-              title: Text('Location'),
+              title: Text('Map'),
               onTap: () {
-                Navigator.of(context).pushReplacementNamed("Location");
+                Navigator.of(context).pushReplacementNamed("Map");
               },
             ),
             ListTile(

@@ -1,7 +1,7 @@
 import 'package:authentification/Login.dart';
 import 'package:authentification/SignUp.dart';
 import 'package:authentification/Start.dart';
-import 'package:authentification/Location.dart';
+import 'package:authentification/Map.dart';
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
 
       theme: ThemeData(
-        primaryColor: Colors.orange
+        primaryColor: Colors.blue
       ),
       debugShowCheckedModeBanner: false,
       home: HomePage(),
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         "Login" : (BuildContext context)=>Login(),
         "SignUp":(BuildContext context)=>SignUp(),
         "Start":(BuildContext context)=>Start(),
-        "Location":(BuildContext context)=>Location(),
+        "Map":(BuildContext context)=>Map(),
       },
       
     );

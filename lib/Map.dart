@@ -1,19 +1,27 @@
 
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:geoflutterfire/geoflutterfire.dart';
 
 
-class Location extends StatefulWidget {
+
+class Map extends StatefulWidget {
   @override
-  _LocationState createState() => _LocationState();
+  _MapState createState() => _MapState();
 }
 
-class _LocationState extends State<Location> {
+class _MapState extends State<Map> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  GoogleMapController mapController;
+  Completer<GoogleMapController> mapController = Completer();
+  Location location = new Location();
+  final geo = Geoflutterfire();
+
+
 
 
   checkAuthentification() async {
@@ -25,9 +33,14 @@ class _LocationState extends State<Location> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    setState(() {
-      mapController = controller;
-    });
+    mapController.complete(controller);
+  }
+
+  userLocation() async {
+    var pos = await location.getLocation();
+    GeoFirePoint myLocation = geo.point(latitude: pos.latitude, longitude:  pos.longitude);
+    firestore.collection('locations')
+        .add({'name': 'myLocation', 'position': myLocation.data});
   }
 
 
@@ -35,13 +48,14 @@ class _LocationState extends State<Location> {
   void initState() {
     super.initState();
     this.checkAuthentification();
+    this.userLocation();
   }
 
   @override
-  Widget build(BuildContext context) {
+  build(context) {
     return Scaffold(
             appBar: AppBar(
-              title: const Text('Location'),
+              title: const Text('Google Map'),
             ),
             drawer: Drawer(
               child: ListView(
@@ -49,7 +63,7 @@ class _LocationState extends State<Location> {
                 children:  <Widget>[
                   DrawerHeader(
                     decoration: BoxDecoration(
-                      color: Colors.orange,
+                      color: Colors.blue,
                     ),
                     child: Text(
                       'Treklocation',
@@ -62,9 +76,9 @@ class _LocationState extends State<Location> {
                   ),
                   ListTile(
                     leading: Icon(Icons.location_on),
-                    title: Text('Location'),
+                    title: Text('Map'),
                     onTap: () {
-                      Navigator.of(context).pushReplacementNamed("Location");
+                      Navigator.of(context).pushReplacementNamed("Map");
                     },
                   ),
                   ListTile(
@@ -83,16 +97,35 @@ class _LocationState extends State<Location> {
             ),
             body:Stack(
                 children: [
-                GoogleMap(
-                initialCameraPosition: CameraPosition(target: LatLng(24.150, -110.32), zoom: 10),
-                onMapCreated: _onMapCreated,
-                myLocationEnabled: true, // Add little blue dot for device location, requires permission from user
-                mapType: MapType.normal,
+                  GoogleMap(
+                    mapType: MapType.normal,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(37.42796133580664, -122.085749655962),
+                      zoom: 14.4746,
+                    ),
+                    onMapCreated: _onMapCreated ,
+                    myLocationEnabled: true,
+                  )]
                 ),
-            ]
-        )
+                floatingActionButton: FloatingActionButton.extended(
+                  onPressed: _goToTheLake,
+                  label: Text('To the lake!'),
+                  icon: Icon(Icons.location_on),
+                ),
     );
   }
+
+
+  Future<void> _goToTheLake() async {
+    final GoogleMapController controller = await mapController.future;
+    controller.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(
+            bearing: 192.8334901395799,
+            target: LatLng(37.43296265331, -122.08832357078792),
+            tilt: 59.440717697143555,
+            zoom: 19.151926040649414)));
+  }
+
 }
 
 
