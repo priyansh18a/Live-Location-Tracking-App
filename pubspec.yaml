@@ -35,6 +35,9 @@ dependencies:
   cloud_firestore: ^2.3.0
   google_sign_in: ^4.5.9
   shared_preferences: ^2.0.6
+  geoflutterfire: ^3.0.1
+  google_maps_flutter: ^2.0.6
+  location: ^4.3.0
 
 dev_dependencies:
   flutter_test:

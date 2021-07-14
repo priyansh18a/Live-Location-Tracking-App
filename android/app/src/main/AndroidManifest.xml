@@ -7,11 +7,12 @@
          FlutterApplication and put your custom class here. -->
 <!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />-->
 <!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>-->
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="authentification"
         android:icon="@mipmap/ic_launcher">
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -27,6 +28,8 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <meta-data android:name="com.google.android.geo.API_KEY"
+                android:value="AIzaSyDUr2UYDIo38FTbfKkLHtHuUKjV5QEO1Ek"/>
             <!-- Displays an Android View that continues showing the launch screen
                  Drawable until Flutter paints its first frame, then this splash
                  screen fades out. A splash screen is useful to avoid any visual

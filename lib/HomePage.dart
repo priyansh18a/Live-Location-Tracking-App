@@ -2,8 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:authentification/Location.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -63,16 +61,24 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Welcome to Treklocation',
-        home: Scaffold(
+    return Scaffold(
               appBar: AppBar(
                 title: Text('Welcome to Treklocation'),
               ),
         body: Container(
         child: !isloggedin
-          ? CircularProgressIndicator()
-          : Column(
+            ? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+              Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(),
+            ])
+              ],
+            ):
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -107,7 +113,7 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                color: Colors.orange,
               ),
               child: Text(
                 'Treklocation',
@@ -122,9 +128,6 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.location_on),
               title: Text('Location'),
               onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
                 Navigator.of(context).pushReplacementNamed("Location");
               },
             ),
@@ -132,8 +135,7 @@ class _HomePageState extends State<HomePage> {
               leading: Icon(Icons.account_circle),
               title: Text('Profile'),
               onTap: () {
-                // change app state...
-                Navigator.pop(context); // close the drawer
+                Navigator.of(context).pushReplacementNamed("/");
               },
             ),
             ListTile(
@@ -149,7 +151,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
     ),
-        )
     );
   }
 }

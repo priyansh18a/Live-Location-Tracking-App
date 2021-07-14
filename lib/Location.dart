@@ -1,8 +1,8 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 
 class Location extends StatefulWidget {
@@ -13,9 +13,7 @@ class Location extends StatefulWidget {
 class _LocationState extends State<Location> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-
-  bool isloggedin = false;
+  GoogleMapController mapController;
 
 
   checkAuthentification() async {
@@ -26,34 +24,24 @@ class _LocationState extends State<Location> {
     });
   }
 
-  getLocation() async {
-
-
-
-
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      mapController = controller;
+    });
   }
 
-  signOut() async {
-    _auth.signOut();
-
-    final googleSignIn = GoogleSignIn();
-    await googleSignIn.signOut();
-  }
 
   @override
   void initState() {
     super.initState();
     this.checkAuthentification();
-    this.getLocation();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Welcome to Treklocation',
-        home: Scaffold(
+    return Scaffold(
             appBar: AppBar(
-              title: const Text('Welcome to Treklocation'),
+              title: const Text('Location'),
             ),
             drawer: Drawer(
               child: ListView(
@@ -61,7 +49,7 @@ class _LocationState extends State<Location> {
                 children:  <Widget>[
                   DrawerHeader(
                     decoration: BoxDecoration(
-                      color: Colors.blue,
+                      color: Colors.orange,
                     ),
                     child: Text(
                       'Treklocation',
@@ -77,13 +65,14 @@ class _LocationState extends State<Location> {
                     title: Text('Location'),
                     onTap: () {
                       Navigator.of(context).pushReplacementNamed("Location");
-                      Navigator.pop(context);
                     },
                   ),
                   ListTile(
                     leading: Icon(Icons.account_circle),
                     title: Text('Profile'),
-
+                    onTap: () {
+                      Navigator.of(context).pushReplacementNamed("/");
+                    },
                   ),
                   ListTile(
                     leading: Icon(Icons.settings),
@@ -92,38 +81,16 @@ class _LocationState extends State<Location> {
                 ],
               ),
             ),
-            body: Container(
-              child: !isloggedin
-                  ? CircularProgressIndicator()
-                  : Column(
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                    child: Text(
-                      "Hello you are logged in using mail id ",
-                      style:
-                      TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  ElevatedButton(
-                    style:ElevatedButton.styleFrom(
-                      primary: Colors.orange,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      padding: EdgeInsets.fromLTRB(70, 10, 70, 10),
-                    ),
-                    onPressed: getLocation,
-                    child: Text('Get Location',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20.0,
-                            fontWeight: FontWeight.bold)),
-
-                  )
-                ],
-              ),
-            ))
+            body:Stack(
+                children: [
+                GoogleMap(
+                initialCameraPosition: CameraPosition(target: LatLng(24.150, -110.32), zoom: 10),
+                onMapCreated: _onMapCreated,
+                myLocationEnabled: true, // Add little blue dot for device location, requires permission from user
+                mapType: MapType.normal,
+                ),
+            ]
+        )
     );
   }
 }
