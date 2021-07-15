@@ -33,8 +33,12 @@ dependencies:
   firebase_auth: ^2.0.0
   firebase_core: ^1.3.0
   cloud_firestore: ^2.3.0
-  google_sign_in: ^4.5.9
+  google_sign_in: ^5.0.4
   shared_preferences: ^2.0.6
+  geoflutterfire: ^3.0.1
+  google_maps_flutter: ^2.0.6
+  location: ^4.3.0
+  rxdart: ^0.27.1
 
 dev_dependencies:
   flutter_test:

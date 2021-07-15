@@ -110,7 +110,7 @@ class _LoginState extends State<Login> {
                     SizedBox(height: 20),
                     ElevatedButton(
                       style:ElevatedButton.styleFrom(
-                        primary: Colors.orange,
+                        primary: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20.0),
                         ),

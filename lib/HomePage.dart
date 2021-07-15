@@ -2,7 +2,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -16,13 +15,12 @@ class _HomePageState extends State<HomePage> {
 
   String displayName;
   String email;
-  User user;
   bool isloggedin = false;
 
   checkAuthentification() async {
     _auth.authStateChanges().listen((user) {
       if (user == null) {
-        Navigator.of(context).pushReplacementNamed("start");
+        Navigator.of(context).pushReplacementNamed("Start");
       }
     });
   }
@@ -63,28 +61,36 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Welcome to Treklocation',
-        home: Scaffold(
-        appBar: AppBar(
-        title: const Text('Welcome to Treklocation'),
-        ),
+    return Scaffold(
+              appBar: AppBar(
+                title: Text('Welcome to Treklocation'),
+              ),
         body: Container(
         child: !isloggedin
-          ? CircularProgressIndicator()
-          : Column(
+            ? Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+              Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                CircularProgressIndicator(),
+            ])
+              ],
+            ):
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                   child: Text(
-                    "Hello ${displayName} you are logged in using mail id ${email}",
+                    "Hello $displayName you are logged in using mail id $email",
                     style:
                         TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
                   ),
                 ),
                 ElevatedButton(
                   style:ElevatedButton.styleFrom(
-                    primary: Colors.orange,
+                    primary: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -100,7 +106,51 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ),
-    ))
+    ) ,
+          drawer: Drawer(
+        child: ListView(
+        padding: EdgeInsets.zero,
+          children: <Widget>[
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Colors.blue,
+              ),
+              child: Text(
+                'Treklocation',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 26,
+                  textBaseline: TextBaseline.ideographic,
+                ),
+              ),
+            ),
+            ListTile(
+              leading: Icon(Icons.location_on),
+              title: Text('Map'),
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed("Map");
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.account_circle),
+              title: Text('Profile'),
+              onTap: () {
+                Navigator.of(context).pushReplacementNamed("/");
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text('Settings'),
+              onTap: () {
+                // Update the state of the app
+                // ...
+                // Then close the drawer
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+    ),
     );
   }
 }
