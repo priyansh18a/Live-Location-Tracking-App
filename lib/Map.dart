@@ -6,7 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:rxdart/rxdart.dart';
-
+import 'package:authentification/HomePage.dart';
 
 class Map extends StatefulWidget {
   @override
@@ -20,34 +20,25 @@ class _MapState extends State<Map> {
   Location location = new Location();
   final geo = Geoflutterfire();
   BehaviorSubject<double> radius = BehaviorSubject();
-  Stream<dynamic> query;
   StreamSubscription subscription;
   Set<Marker> customMarkers = {};
 
   double lat ;
   double long;
 
-  checkAuthentification() async {
-    _auth.authStateChanges().listen((user) {
-      if (user == null) {
-        Navigator.of(context).pushReplacementNamed("Start");
-      }
-    });
-  }
 
   void _onMapCreated(GoogleMapController controller)
   {
     // location.onLocationChanged.listen((position) {
     //   GeoFirePoint myLocation = geo.point(
-    //       latitude: position.latitude, longitude: pos.longitude);
-
+    //       latitude: position.latitude, longitude: position.longitude);
       // firestore.collection('locations')
       //     .add({'name': 'myLocation', 'position': myLocation.data});
     // });
     mapController.complete(controller);
   }
 
-  void updateMarkers(List<DocumentSnapshot> documentList){
+  void _updateMarkers(List<DocumentSnapshot> documentList){
     customMarkers = {};
     documentList.forEach((DocumentSnapshot document) {
       GeoPoint pos = document['position']['geopoint'];
@@ -63,11 +54,13 @@ class _MapState extends State<Map> {
     });
   }
 
-  setQuery() async {
+  _setQuery() async {
     var pos = await location.getLocation();
     this.lat = pos.latitude;
     this.long = pos.longitude;
     GeoFirePoint myLocation = geo.point(latitude: lat, longitude: long);
+    // GeoFirePoint abc = geo.point(latitude: 25.9875, longitude: 80.3395);
+    // firestore.collection('locations').add({'name': 'Kanpur', 'position': abc.data});
 
     var ref = firestore.collection('locations');
 
@@ -81,16 +74,15 @@ class _MapState extends State<Map> {
           field: 'position',
           strictMode: true
       );
-    }).listen(updateMarkers);
+    }).listen(_updateMarkers);
 
   }
 
   _updateQuery(value) async {
-    // var pos = await location.getLocation();
     setState(() {
       radius.add(value);
     });
-    final zoomMap = {100.0: 12.0, 150.0: 11.0, 200: 10.0, 250.0: 9.0,300:8.0, 350.0: 7.0, 400.0: 6.0, 450: 5.0, 500.0: 4.0};
+    final zoomMap = {100.0: 12.0, 150.0: 11.0, 200: 9.0, 250.0: 8.0, 300:7, 350.0: 6.0, 400.0: 5.0, 450: 4.0, 500.0: 3.0};
     final num zoom = zoomMap[value];
     final GoogleMapController controller = await mapController.future;
     controller.moveCamera(CameraUpdate.zoomTo(zoom));
@@ -100,9 +92,8 @@ class _MapState extends State<Map> {
   @override
   void initState() {
     super.initState();
-    this.checkAuthentification();
     radius.add(100.0);
-    setQuery();
+    this._setQuery();
   }
 
   @override
@@ -111,44 +102,7 @@ class _MapState extends State<Map> {
             appBar: AppBar(
               title: const Text('Google Map'),
             ),
-            drawer: Drawer(
-              child: ListView(
-                padding: EdgeInsets.zero,
-                children:  <Widget>[
-                  DrawerHeader(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                    ),
-                    child: Text(
-                      'Treklocation',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 26,
-                        textBaseline: TextBaseline.ideographic,
-                      ),
-                    ),
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.location_on),
-                    title: Text('Map'),
-                    onTap: () {
-                      Navigator.of(context).pushReplacementNamed("Map");
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.account_circle),
-                    title: Text('Profile'),
-                    onTap: () {
-                      Navigator.of(context).pushReplacementNamed("/");
-                    },
-                  ),
-                  ListTile(
-                    leading: Icon(Icons.settings),
-                    title: Text('Settings'),
-                  ),
-                ],
-              ),
-            ),
+            drawer: drawer(context),
             body:Stack(
                 children: [
                   GoogleMap(
@@ -174,11 +128,7 @@ class _MapState extends State<Map> {
                         onChanged: _updateQuery,
                       )
                   )
-                ]),
-                floatingActionButton: FloatingActionButton.extended(
-                  label: Text('To the lake!'),
-                  icon: Icon(Icons.location_on),
-                ),
+                ])
     );
   }
 
