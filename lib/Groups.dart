@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:authentification/HomePage.dart';
+import 'package:authentification/GroupMap.dart';
 
 class Groups extends StatefulWidget {
   @override
@@ -11,22 +12,16 @@ class Groups extends StatefulWidget {
 class _GroupsState extends State<Groups> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  String _username;
+  late String _username;
 
 
-  Future <void> getUser() async {
-    DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser.uid).get();
-    if (documentSnapshot.exists) {
-      this._username =  documentSnapshot.get('displayName');
-    }else {
-      print('User does not exist in the database');
-    }
-  }
 
   @override
   void initState() {
     super.initState();
-    this.getUser() ;
+    setState(() {
+      _username = username;
+    });
   }
 
   @override
@@ -51,7 +46,7 @@ class _GroupsState extends State<Groups> {
                     return ListView(
                       scrollDirection: Axis.vertical,
                       shrinkWrap: true,
-                      children: snapshot.data.docs.map((element) {
+                      children: snapshot.data!.docs.map((element) {
                         return Container(
                             height: MediaQuery.of(context).size.height / 8,
                             child: Padding(
@@ -70,6 +65,15 @@ class _GroupsState extends State<Groups> {
                                           element["users"].join(",  "),
                                           style: TextStyle(color: Colors.cyanAccent,)
                                       ),
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(
+                                          builder: (context) => GroupMap(
+                                            groupId: element.id.toString(),
+                                            title: element['groupName'].toString(),
+                                          ),
+                                        ),
+                                        );
+                                        },
                                     )
                                   ]
                                 )

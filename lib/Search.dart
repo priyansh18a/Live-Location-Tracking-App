@@ -13,17 +13,17 @@ class _SearchState extends State<Search> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  TextEditingController _searchQuery, _groupName;
+  late TextEditingController _searchQuery, _groupName;
   bool _isSearching = false;
   bool _isLoading = false;
   String searchQuery = "Search query";
-  String _username ;
+  late String _username ;
   List<String> _usernames = <String>[];
   List<String> _selectedUsernames= <String> [];
 
 
   void _startSearch() {
-    ModalRoute.of(context).addLocalHistoryEntry(new LocalHistoryEntry(onRemove: _stopSearching));
+    ModalRoute.of(context)!.addLocalHistoryEntry(new LocalHistoryEntry(onRemove: _stopSearching));
     setState(() {
       _isSearching = true;
       _isLoading = true;
@@ -65,9 +65,9 @@ class _SearchState extends State<Search> {
   }
 
   Future <void> getUser() async {
-    DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser.uid).get();
+    DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser!.uid).get();
     if (documentSnapshot.exists) {
-      this._username =  documentSnapshot.get('displayName');
+      _username =  documentSnapshot.get('displayName');
     }else {
       print('User does not exist in the database');
     }
@@ -139,7 +139,7 @@ class _SearchState extends State<Search> {
       });
     } catch (e) {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to create group ${e}')));
+          .showSnackBar(SnackBar(content: Text('Failed to create group $e')));
     }
     Navigator.of(context).pushReplacementNamed("Groups");
   }
@@ -150,8 +150,7 @@ class _SearchState extends State<Search> {
         new IconButton(
           icon: const Icon(Icons.clear),
           onPressed: () {
-            if (_searchQuery == null ||
-                _searchQuery.text.isEmpty) {
+            if (_searchQuery.text.isEmpty) {
               Navigator.pop(context);
               return;
             }
@@ -222,7 +221,10 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
-    this.getUser();
+    getUser().whenComplete(() {
+      setState(() {
+      });
+    }) ;
     _searchQuery = new TextEditingController();
   }
 
