@@ -9,6 +9,52 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
+
+Widget drawer(BuildContext context) {
+  return new  Drawer(
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: <Widget>[
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+          ),
+          child: Text(
+            'Treklocation',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 26,
+              textBaseline: TextBaseline.ideographic,
+            ),
+          ),
+        ),
+        ListTile(
+          leading: Icon(Icons.location_on),
+          title: Text('Map'),
+          onTap: () {
+            Navigator.of(context).pushReplacementNamed("Map");
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.account_circle),
+          title: Text('Profile'),
+          onTap: () {
+            Navigator.of(context).pushReplacementNamed("/");
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.people),
+          title: Text('Groups'),
+          onTap: () {
+            Navigator.of(context).pushReplacementNamed("Groups");
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -51,6 +97,7 @@ class _HomePageState extends State<HomePage> {
     final googleSignIn = GoogleSignIn();
     await googleSignIn.signOut();
   }
+
 
   @override
   void initState() {
@@ -107,50 +154,7 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
     ) ,
-          drawer: Drawer(
-        child: ListView(
-        padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Treklocation',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  textBaseline: TextBaseline.ideographic,
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.location_on),
-              title: Text('Map'),
-              onTap: () {
-                Navigator.of(context).pushReplacementNamed("Map");
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.account_circle),
-              title: Text('Profile'),
-              onTap: () {
-                Navigator.of(context).pushReplacementNamed("/");
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
-              onTap: () {
-                // Update the state of the app
-                // ...
-                // Then close the drawer
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-    ),
+          drawer: drawer(context)
     );
   }
 }
