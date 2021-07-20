@@ -14,14 +14,22 @@ class _GroupsState extends State<Groups> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   late String _username;
 
-
+  getUser() async {
+    _username = '' ;
+    DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser?.uid).get();
+    if (documentSnapshot.exists) {
+        _username =  documentSnapshot.get('displayName');
+    } else {
+      print('User does not exist in the database');
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _username = username;
-    });
+    getUser().whenComplete(() {
+      setState((){});
+    }) ;
   }
 
   @override

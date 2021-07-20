@@ -56,7 +56,7 @@ class _MapState extends State<Map> {
       Marker marker = Marker(
         markerId: MarkerId(document['name']),
         position: LatLng(pos.latitude, pos.longitude),
-        infoWindow: InfoWindow(title: document['name'], snippet: document['name']),
+        infoWindow: InfoWindow(title: document['name']),
         icon: BitmapDescriptor.defaultMarker,
       );
       setState(() {
@@ -70,8 +70,6 @@ class _MapState extends State<Map> {
     lat = pos.latitude!;
     long = pos.longitude!;
     GeoFirePoint myLocation = geo.point(latitude: lat, longitude: long);
-    // GeoFirePoint abc = geo.point(latitude: 25.9875, longitude: 80.3395);
-    // firestore.collection('locations').add({'name': 'Kanpur', 'position': abc.data});
 
     var ref = firestore.collection('groups').doc(_groupId).collection('locations');
     print(ref);
