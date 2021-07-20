@@ -6,9 +6,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:authentification/GroupMap.dart';
 import 'package:authentification/HomePage.dart';
 
 class Map extends StatefulWidget {
+  const Map({Key? key}) : super(key: key);
+
   @override
   _MapState createState() => _MapState();
 }
@@ -20,21 +23,29 @@ class _MapState extends State<Map> {
   Location location = new Location();
   final geo = Geoflutterfire();
   BehaviorSubject<double> radius = BehaviorSubject();
-  StreamSubscription subscription;
+  late StreamSubscription subscription;
   Set<Marker> customMarkers = {};
+  late String _username;
+  late String _groupId ;
 
-  double lat ;
-  double long;
+  late double lat ;
+  late double long;
+
 
 
   void _onMapCreated(GoogleMapController controller)
   {
-    // location.onLocationChanged.listen((position) {
-    //   GeoFirePoint myLocation = geo.point(
-    //       latitude: position.latitude, longitude: position.longitude);
-      // firestore.collection('locations')
-      //     .add({'name': 'myLocation', 'position': myLocation.data});
-    // });
+    location.onLocationChanged.listen((position) {
+      CameraUpdate.newCameraPosition(
+          CameraPosition(target: LatLng(position.latitude!, position.longitude!))
+      );
+      GeoFirePoint myLocation = geo.point(
+          latitude: position.latitude!, longitude: position.longitude!);
+      firestore.collection('groups').doc(_groupId)
+          .collection('locations').doc(_auth.currentUser!.uid)
+          .set({'name': _username, 'position': myLocation.data});
+      });
+
     mapController.complete(controller);
   }
 
@@ -45,7 +56,7 @@ class _MapState extends State<Map> {
       Marker marker = Marker(
         markerId: MarkerId(document['name']),
         position: LatLng(pos.latitude, pos.longitude),
-        infoWindow: InfoWindow(title: document['name'], snippet: document['name']),
+        infoWindow: InfoWindow(title: document['name']),
         icon: BitmapDescriptor.defaultMarker,
       );
       setState(() {
@@ -56,13 +67,12 @@ class _MapState extends State<Map> {
 
   _setQuery() async {
     var pos = await location.getLocation();
-    this.lat = pos.latitude;
-    this.long = pos.longitude;
+    lat = pos.latitude!;
+    long = pos.longitude!;
     GeoFirePoint myLocation = geo.point(latitude: lat, longitude: long);
-    // GeoFirePoint abc = geo.point(latitude: 25.9875, longitude: 80.3395);
-    // firestore.collection('locations').add({'name': 'Kanpur', 'position': abc.data});
 
-    var ref = firestore.collection('locations');
+    var ref = firestore.collection('groups').doc(_groupId).collection('locations');
+    print(ref);
 
     final GoogleMapController controller = await mapController.future;
     controller.animateCamera(CameraUpdate.newLatLng(new LatLng(lat, long)));
@@ -83,26 +93,36 @@ class _MapState extends State<Map> {
       radius.add(value);
     });
     final zoomMap = {100.0: 12.0, 150.0: 11.0, 200: 9.0, 250.0: 8.0, 300:7, 350.0: 6.0, 400.0: 5.0, 450: 4.0, 500.0: 3.0};
-    final num zoom = zoomMap[value];
+    final double zoom =  zoomMap[value] as double;
     final GoogleMapController controller = await mapController.future;
     controller.moveCamera(CameraUpdate.zoomTo(zoom));
     // controller.moveCamera(CameraUpdate.newLatLngZoom(new LatLng(lat, long), zoom));
+  }
+
+  Future <void> getUser() async {
+    DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser!.uid).get();
+    if (documentSnapshot.exists) {
+      _username =  documentSnapshot.get('displayName');
+    }else {
+      print('User does not exist in the database');
+    }
   }
 
   @override
   void initState() {
     super.initState();
     radius.add(100.0);
-    this._setQuery();
+    _groupId = grpId;
+    _setQuery().whenComplete(() {
+      setState(() {
+        _username = username;
+      });
+    }) ;
   }
 
   @override
   Widget build(BuildContext context)  {
     return Scaffold(
-            appBar: AppBar(
-              title: const Text('Google Map'),
-            ),
-            drawer: drawer(context),
             body:Stack(
                 children: [
                   GoogleMap(

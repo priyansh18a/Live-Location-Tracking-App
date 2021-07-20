@@ -15,7 +15,7 @@ class _StartState extends State<Start> {
 
   Future<UserCredential> googleSignIn() async {
     GoogleSignIn googleSignIn = GoogleSignIn();
-    GoogleSignInAccount googleUser = await googleSignIn.signIn();
+    GoogleSignInAccount? googleUser = await googleSignIn.signIn();
     if (googleUser != null) {
       GoogleSignInAuthentication googleAuth = await googleUser.authentication;
 
@@ -24,9 +24,9 @@ class _StartState extends State<Start> {
             accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
 
         final UserCredential user = await _auth.signInWithCredential(credential);
-        final User userdetails = _auth.currentUser ;
-        await firestore.collection("users").doc(_auth.currentUser.uid).set({
-          'displayName': userdetails.displayName,
+        final User? userdetails = _auth.currentUser ;
+        await firestore.collection("users").doc(_auth.currentUser!.uid).set({
+          'displayName': userdetails!.displayName,
           'email':userdetails.email,
         })
             .then((value) => print("User Added"))
@@ -60,7 +60,7 @@ class _StartState extends State<Start> {
             Container(
               height: 400,
               child: Image(
-                image: AssetImage("images/start.jpg"),
+                image: AssetImage("images/login.jpg"),
                 fit: BoxFit.contain,
               ),
             ),
@@ -89,37 +89,39 @@ class _StartState extends State<Start> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                RaisedButton(
-                    padding: EdgeInsets.only(left: 30, right: 30),
-                    onPressed: navigateToLogin,
-                    child: Text(
-                      'LOGIN',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                ElevatedButton(
+                  style:ElevatedButton.styleFrom(
+                    primary: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    color: Colors.blue),
+                    padding: EdgeInsets.only(left: 30, right: 30),
+                  ),
+                  onPressed: navigateToLogin,
+                  child: Text('Login',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold)),
+
+                ),
                 SizedBox(width: 20.0),
-                RaisedButton(
-                    padding: EdgeInsets.only(left: 30, right: 30),
-                    onPressed: navigateToRegister,
-                    child: Text(
-                      'REGISTER',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                    ),
+                ElevatedButton(
+                  style:ElevatedButton.styleFrom(
+                    primary: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    color: Colors.blue),
+                    padding: EdgeInsets.only(left: 30, right: 30),
+                  ),
+                  onPressed: navigateToRegister,
+                  child: Text('Register',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold)),
+
+                )
               ],
             ),
             SizedBox(height: 20.0),

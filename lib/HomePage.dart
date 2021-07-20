@@ -29,13 +29,6 @@ Widget drawer(BuildContext context) {
           ),
         ),
         ListTile(
-          leading: Icon(Icons.location_on),
-          title: Text('Map'),
-          onTap: () {
-            Navigator.of(context).pushReplacementNamed("Map");
-          },
-        ),
-        ListTile(
           leading: Icon(Icons.account_circle),
           title: Text('Profile'),
           onTap: () {
@@ -55,13 +48,16 @@ Widget drawer(BuildContext context) {
 }
 
 
+late String username;
+
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  String displayName;
-  String email;
-  bool isloggedin = false;
+  late String displayName;
+  late String email;
+  late User firebaseUser;
+  bool isLoggedIn = false;
 
   checkAuthentification() async {
     _auth.authStateChanges().listen((user) {
@@ -72,23 +68,21 @@ class _HomePageState extends State<HomePage> {
   }
 
   getUser() async {
-    User firebaseUser = _auth.currentUser;
-    await firebaseUser?.reload();
-    firebaseUser = _auth.currentUser;
+    firebaseUser = _auth.currentUser!;
 
-    DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser.uid).get();
+    DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser?.uid).get();
     if (documentSnapshot.exists) {
       email = documentSnapshot.get('email');
       displayName =  documentSnapshot.get('displayName');
+      username = displayName;
     } else {
       print('User does not exist in the database');
     }
 
-    if (firebaseUser != null ) {
-      setState(() {
-        this.isloggedin = true;
-      });
-    }
+    setState(() {
+      isLoggedIn = true;
+    });
+
   }
 
   signOut() async {
@@ -103,7 +97,9 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     this.checkAuthentification();
-    this.getUser();
+    getUser().whenComplete(() {
+      setState((){});
+    }) ;
   }
 
   @override
@@ -113,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                 title: Text('Welcome to Treklocation'),
               ),
         body: Container(
-        child: !isloggedin
+        child: !isLoggedIn
             ? Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[

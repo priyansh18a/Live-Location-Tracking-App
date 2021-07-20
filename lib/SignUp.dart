@@ -12,7 +12,7 @@ class _SignUpState extends State<SignUp> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  String _name, _email, _password;
+  late String _name, _email, _password;
 
   checkAuthentication() async {
     _auth.authStateChanges().listen((user) async {
@@ -29,22 +29,21 @@ class _SignUpState extends State<SignUp> {
   }
 
   signUp() async {
-    if (_formKey.currentState.validate()) {
-      _formKey.currentState.save();
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
 
       try {
         UserCredential user = await _auth.createUserWithEmailAndPassword(
             email: _email, password: _password);
-        if (user != null)
           // await _auth.currentUser.updateDisplayName(_name);
-          return firestore.collection("users").doc(_auth.currentUser.uid).set({
+          return firestore.collection("users").doc(_auth.currentUser!.uid).set({
             'displayName': _name,
             'email':_email,
             })
               .then((value) => print("User Added"))
               .catchError((error) => print("Failed to add user: $error"));
       } catch (e) {
-        showError(e.message);
+        showError(e.toString());
         print(e);
       }
     }
@@ -58,7 +57,7 @@ class _SignUpState extends State<SignUp> {
             title: Text('ERROR'),
             content: Text(errormessage),
             actions: <Widget>[
-              FlatButton(
+              TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -90,28 +89,28 @@ class _SignUpState extends State<SignUp> {
                     Container(
                       child: TextFormField(
                           validator: (input) {
-                            if (input.isEmpty) return 'Enter Name';
+                            if (input!.isEmpty) return 'Enter Name';
                           },
                           decoration: InputDecoration(
                             labelText: 'Name',
                             prefixIcon: Icon(Icons.person),
                           ),
-                          onSaved: (input) => _name = input),
+                          onSaved: (input) => _name = input!),
                     ),
                     Container(
                       child: TextFormField(
                           validator: (input) {
-                            if (input.isEmpty) return 'Enter Email';
+                            if (input!.isEmpty) return 'Enter Email';
                           },
                           decoration: InputDecoration(
                               labelText: 'Email',
                               prefixIcon: Icon(Icons.email)),
-                          onSaved: (input) => _email = input),
+                          onSaved: (input) => _email = input!),
                     ),
                     Container(
                       child: TextFormField(
                           validator: (input) {
-                            if (input.length < 6)
+                            if (input!.length < 6)
                               return 'Provide Minimum 6 Character';
                           },
                           decoration: InputDecoration(
@@ -119,21 +118,24 @@ class _SignUpState extends State<SignUp> {
                             prefixIcon: Icon(Icons.lock),
                           ),
                           obscureText: true,
-                          onSaved: (input) => _password = input),
+                          onSaved: (input) => _password = input!),
                     ),
                     SizedBox(height: 20),
-                    RaisedButton(
-                      padding: EdgeInsets.fromLTRB(70, 10, 70, 10),
+                    ElevatedButton(
+                      style:ElevatedButton.styleFrom(
+                        primary: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0),
+                        ),
+                        padding: EdgeInsets.fromLTRB(70, 10, 70, 10),
+                      ),
                       onPressed: signUp,
-                      child: Text('SignUp',
+                      child: Text('Sign Up',
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 20.0,
                               fontWeight: FontWeight.bold)),
-                      color: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
+
                     )
                   ],
                 ),
