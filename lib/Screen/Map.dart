@@ -6,8 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geoflutterfire/geoflutterfire.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:authentification/GroupMap.dart';
-import 'package:authentification/HomePage.dart';
+import 'package:authentification/Utilities/GroupMap.dart';
+import 'package:authentification/Screen/HomePage.dart';
 
 class Map extends StatefulWidget {
   const Map({Key? key}) : super(key: key);

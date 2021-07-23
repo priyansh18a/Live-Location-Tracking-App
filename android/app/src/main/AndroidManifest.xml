@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="authentification"
+        android:label="Treklocation"
         android:icon="@mipmap/ic_launcher">
 
         <activity
@@ -48,6 +48,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        
         <meta-data android:name="com.google.android.geo.API_KEY"
             android:value="YOUR_API_KEY"/>
     </application>

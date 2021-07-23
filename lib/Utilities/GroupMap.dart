@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:authentification/Map.dart';
+import 'package:authentification/Screen/Map.dart';
 
 
 late String grpId;
