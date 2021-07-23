@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -29,8 +30,8 @@ Widget drawer(BuildContext context) {
           ),
         ),
         ListTile(
-          leading: Icon(Icons.account_circle),
-          title: Text('Profile'),
+          leading: Icon(Icons.home),
+          title: Text('Home'),
           onTap: () {
             Navigator.of(context).pushReplacementNamed("/");
           },
@@ -40,6 +41,13 @@ Widget drawer(BuildContext context) {
           title: Text('Groups'),
           onTap: () {
             Navigator.of(context).pushReplacementNamed("Groups");
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.account_circle),
+          title: Text('Profile'),
+          onTap: () {
+            Navigator.of(context).pushReplacementNamed("Profile");
           },
         ),
       ],
@@ -55,7 +63,6 @@ class _HomePageState extends State<HomePage> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   late String displayName;
-  late String email;
   late User firebaseUser;
   bool isLoggedIn = false;
 
@@ -72,7 +79,6 @@ class _HomePageState extends State<HomePage> {
 
     DocumentSnapshot documentSnapshot = await firestore.collection('users').doc(_auth.currentUser?.uid).get();
     if (documentSnapshot.exists) {
-      email = documentSnapshot.get('email');
       displayName =  documentSnapshot.get('displayName');
       username = displayName;
     } else {
@@ -106,12 +112,12 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
               appBar: AppBar(
-                title: Text('Welcome to Treklocation'),
+                title: Text('Home'),
               ),
         body: Container(
         child: !isLoggedIn
-            ? Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+              ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
               Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -119,21 +125,85 @@ class _HomePageState extends State<HomePage> {
                 CircularProgressIndicator(),
             ])
               ],
-            ):
-            Column(
+            ): Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Container(
-                  padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                  padding: EdgeInsets.fromLTRB(25, 10, 30, 10),
+                  child: new RichText(
+                    text: new TextSpan(
+                      children: [
+                        new TextSpan(
+                          text: 'Welcome to ',
+                          style: new TextStyle(color: Colors.black),
+                        ),
+                        new TextSpan(
+                          text: 'Treklocation',
+                          style: new TextStyle(color: Colors.blue),
+                        ),
+                      ],
+                      style: TextStyle(fontSize: 30.0, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
                   child: Text(
-                    "Hello $displayName you are logged in using mail id $email",
+                    "Hello $displayName!",
                     style:
-                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                    TextStyle(fontSize: 25.0, fontWeight: FontWeight.normal, color: Colors.orange),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                  child: new RichText(
+                    text: new TextSpan(
+                      children: [
+                        new TextSpan(
+                          text: 'To see your groups move to ',
+                          style: new TextStyle(color: Colors.black),
+                        ),
+                        new TextSpan(
+                          text: 'Groups Page.',
+                          style: new TextStyle(color: Colors.blue),
+                          recognizer: new TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.of(context).pushReplacementNamed("Groups");
+                            },
+                        ),
+                      ],
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 20),
+                  child: new RichText(
+                    text: new TextSpan(
+                      children: [
+                        new TextSpan(
+                          text: 'To see your profile move to ',
+                          style: new TextStyle(color: Colors.black),
+                        ),
+                        new TextSpan(
+                          text: 'Profile Page.',
+                          style: new TextStyle(color: Colors.blue),
+                          recognizer: new TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.of(context).pushReplacementNamed("Profile");
+                            },
+                        ),
+                      ],
+                      style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.normal),
+                    ),
                   ),
                 ),
                 ElevatedButton(
                   style:ElevatedButton.styleFrom(
-                    primary: Colors.blue,
+                    primary: Colors.red[400],
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -149,6 +219,8 @@ class _HomePageState extends State<HomePage> {
                 )
               ],
             ),
+          ]
+        ),
     ) ,
           drawer: drawer(context)
     );
