@@ -11,6 +11,7 @@ In this app, you can make a group and track live location of all the users in th
 ### Portal Screenshots:
 
 #StartPage (where user land when he is not logged in):
+
 <img src="media/Start.jpg" width="250">
 
 #Signup Page:
@@ -18,6 +19,7 @@ In this app, you can make a group and track live location of all the users in th
 <img src="media/Register.jpg" width="250">
 
 #Homepage(Where user land after loggned in):
+
 <img src="media/Homepage.jpg" width="250">
 
 #Drawer:
@@ -25,6 +27,7 @@ In this app, you can make a group and track live location of all the users in th
 <img src="media/Drawer.jpg" width="250">
 
 #Groups(Showing all group of which user is part of):
+
 <img src="media/Groups.jpg" width="250">
 
 #Group Admin Menu:
