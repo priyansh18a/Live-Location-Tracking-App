@@ -1,7 +1,5 @@
 # Live-Location-Tracking-App
 
-### A project of Coding Club IITG
-
 In this app, you can make a group and track live location of all the users in tha group. If you are admin of the group than you edit members of the group or event delete the group. Non-admin member can leave the group if they don't want to remain part of the group. This app has the functionality of Sign in with google or any mail id.
 
 
