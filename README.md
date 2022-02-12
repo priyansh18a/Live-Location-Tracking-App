@@ -5,6 +5,8 @@ In this app, you can make a group and track live location of all the users in th
 
 **This project is made using Flutter SDK. Used Google Firebase for authentication and database technology and Google Maps API to display location in Google Maps.**
 
+
+### Codebase Visualization:
 ![Visualization of the codebase](./diagram.svg)
 
 
